@@ -15,16 +15,17 @@ public class Autor {
     private Long id;
     @Column(unique = true)
     private String nombre;
-    private LocalDate fechaNacimiento;
-    private LocalDate fechaMuerte;
+    private Integer fechaNacimiento;
+    private Integer fechaMuerte;
     @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Libro> libros;
 
     public Autor(){}
     public Autor(DatosAutor datosAutor) {
         this.nombre = datosAutor.nombre();
-        this.fechaMuerte = datosAutor.anoMuerte();
-        this.fechaNacimiento = datosAutor.anoNacimiento();
+        this.fechaMuerte = datosAutor.fechaMuerte();
+        this.fechaNacimiento = datosAutor.fechaNacimiento();
+        System.out.println("creando el autor: "+ this.fechaMuerte);
     }
 
     @Override
@@ -44,19 +45,19 @@ public class Autor {
         this.nombre = nombre;
     }
 
-    public LocalDate getFechaNacimiento() {
+    public Integer getFechaNacimiento() {
         return fechaNacimiento;
     }
 
-    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+    public void setFechaNacimiento(Integer fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    public LocalDate getFechaMuerte() {
+    public Integer getFechaMuerte() {
         return fechaMuerte;
     }
 
-    public void setFechaMuerte(LocalDate fechaMuerte) {
+    public void setFechaMuerte(Integer fechaMuerte) {
         this.fechaMuerte = fechaMuerte;
     }
 

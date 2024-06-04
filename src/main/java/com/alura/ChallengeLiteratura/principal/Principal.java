@@ -18,6 +18,7 @@ import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Principal{
     private ConsumoAPI consumoAPI = new ConsumoAPI();
@@ -86,23 +87,49 @@ public class Principal{
     }
 
     private void getIdioma() {
+        imprimirIdiomasdisponibles();
+
         System.out.println("Ingrese el idioma");
         String idioma = teclado.nextLine();
         List<Libro> libros = repositorioLibros.findByIdiomaEquals(idioma);
+        System.out.println("Libros encontrados: ");
         libros.stream().forEach(System.out::println);
+        System.out.println("\n");
+    }
+    private void imprimirIdiomasdisponibles(){
+        List<String> listaIdiomas= repositorioLibros.findAll().stream()
+                .map(e->e.getIdioma())
+                .distinct()
+                .collect(Collectors.toList());
+        System.out.println("Los idiomas disponibles son:");
+        for (String elem : listaIdiomas){
+            switch (elem){
+                case "es":
+                    System.out.println("es: Español");
+                    break;
+                case "en":
+                    System.out.println("en: Ingles");
+                    break;
+                default:
+                    System.out.println(elem);
+            }
+        }
+        System.out.println("\n");
     }
 
     private void getautoresVivos() throws java.text.ParseException {
         System.out.println("A continuación ingrese el perido que quiere analizar");
-        System.out.println("Ingrese el año inicial");
-        String anoInicial = teclado.nextLine();
+        try {
+            System.out.println("Ingrese el año");
+            Integer anoInicial = teclado.nextInt();
 
-        System.out.println("Ingrese el año final");
-        String anofinal = teclado.nextLine();
-        LocalDate dateinicial = LocalDate.parse(anoInicial+"-01-01");
-        LocalDate datefinal = LocalDate.parse(anofinal+"-12-31");
-        List<Autor> autoresVivos =  repositorioAutores.findByFechaNacimientoGreaterThanAndFechaMuerteLessThan(dateinicial,datefinal);
-        autoresVivos.stream().forEach(System.out::println);
+            List<Autor> autoresVivos =  repositorioAutores.findByFechaMuerteGreaterThanEqualAndFechaNacimientoLessThan(anoInicial, anoInicial);
+            autoresVivos.stream().forEach(System.out::println);
+        }catch (InputMismatchException e){
+            System.out.println("Año no válido");
+        }
+        System.out.println("\n");
+
     }
 
     private void getLibros(){
@@ -153,7 +180,7 @@ public class Principal{
             DatosAutor datosAutor = conversor.obtenerDatos(autor.toString(), DatosAutor.class);
             Autor autornuevo = new Autor(datosAutor);
             repositorioAutores.save(autornuevo);
-            System.out.println("Se ha añadido el autor " + autornuevo.getNombre() + " a la base de datos");
+            System.out.println("Se ha añadido el autor " + autornuevo + " a la base de datos");
             return autornuevo;
         }
 
